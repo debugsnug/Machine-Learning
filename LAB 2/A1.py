@@ -63,3 +63,53 @@ plt.xticks(rotation=45)
 plt.title("Change % vs. Day of the Week")
 plt.tight_layout() #  prevents labels from overlapping
 plt.show()
+
+df = pd.read_excel(xls, sheet_name="thyroid0387_UCI")
+df.replace('?', np.nan, inplace=True)
+df = df.infer_objects()  # Ensures proper type conversion
+missing_values = df.isnull().sum()
+
+# Converts categorical columns to string for Label Encoding 
+categorical_cols = df.select_dtypes(include=['object']).columns
+for col in categorical_cols:
+    df[col] = df[col].astype(str)  # Converts to string
+    df[col] = LabelEncoder().fit_transform(df[col])
+
+print("A4 Results:")
+print(df.describe())
+print("Missing Values:\n", missing_values)
+
+vector1 = df.iloc[0, :].values
+vector2 = df.iloc[1, :].values
+f11 = np.sum((vector1 == 1) & (vector2 == 1))
+f00 = np.sum((vector1 == 0) & (vector2 == 0))
+f10 = np.sum((vector1 == 1) & (vector2 == 0))
+f01 = np.sum((vector1 == 0) & (vector2 == 1))
+
+# Check for division by zero
+denominator = (f01 + f10 + f11)
+JC = f11 / denominator if denominator != 0 else 0  # Handles the case where all are 0
+SMC = (f11 + f00) / (f00 + f01 + f10 + f11) if (f00 + f01 + f10 + f11) != 0 else 0
+
+print("A5 Results:")
+print(f"Jaccard Coefficient: {JC}, SMC: {SMC}")
+
+vector1 = df.iloc[0, :].values.reshape(1, -1)
+vector2 = df.iloc[1, :].values.reshape(1, -1)
+result = cosine_similarity(vector1, vector2)[0][0]
+print("A6 Result:", result)
+
+df_subset = df.iloc[:20, :]  # Uses a subset for better visualization
+similarity_matrix = np.zeros((20, 20))
+
+for i in range(20):
+    for j in range(20):
+        if i != j:
+            similarity_matrix[i, j] = np.linalg.norm(df_subset.iloc[i] - df_subset.iloc[j])  # Euclidean distance
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(similarity_matrix, annot=False, cmap='coolwarm')  # (annot=False) for cleaner heatmap
+plt.title("Heatmap of Euclidean Distances (Dissimilarity)")
+plt.tight_layout()
+plt.show()
+
