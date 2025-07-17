@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
-file_path = r"C:\\Users\\KIRAN\Downloads\\Lab Session Data.xlsx"  
+file_path = r"D:\\OneDrive - Amrita vishwa vidyapeetham\\SEM 5\\23CSE301 Machine Learning\\LAB\\Machine-Learning\\LAB 2\\Lab Session Data.xlsx"  
 xls = pd.ExcelFile(file_path)
 
 try:
@@ -113,3 +113,27 @@ plt.title("Heatmap of Euclidean Distances (Dissimilarity)")
 plt.tight_layout()
 plt.show()
 
+df = pd.read_excel(xls, sheet_name="thyroid0387_UCI")
+df.replace('?', np.nan, inplace=True)
+df = df.infer_objects()
+
+for col in df.columns:
+    if df[col].dtype in ['float64', 'int64']:
+        df[col] = df[col].fillna(df[col].median())
+    else:
+        df[col] = df[col].fillna(df[col].mode()[0])
+
+print("A8 Results:")
+print(df)
+
+
+categorical_cols = df.select_dtypes(include=['object']).columns
+for col in categorical_cols:
+    df[col] = LabelEncoder().fit_transform(df[col])
+
+numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
+scaler = MinMaxScaler()
+df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+
+print("A7 Results:")
+print(df)
