@@ -84,3 +84,37 @@ for name, model in models.items():
 # Convert to DataFrame
 results_df = pd.DataFrame(results)
 print(results_df)
+
+
+# SVM:
+    #Train: 94.8%, Test: 94.3% → very consistent → good generalization.
+    #Precision slightly lower (0.889) → it sometimes mislabels negatives as positives.
+    #F1: 0.916 → reliable.
+#Decision Tree
+    #Train: 100%, Test: 90.8% → classic overfit (memorized training set, weaker test performance).
+    #Precision/Recall balanced but not great.
+    #Not the best standalone choice.
+#Random Forest
+    #Train: 100%, Test: 94.3%.
+    #Better generalization than single tree because of bagging.
+    #Precision (0.924) & Recall (0.943) → very strong.
+#AdaBoost
+    #Train: 95.4%, Test: 94.3%.
+    #Very stable.
+    #Highest F1 (0.934) → excellent balance.
+#Naive Bayes
+    #Train: 93.3%, Test: 92.2%.
+    #Slightly weaker than others, but still good.
+    #Assumes feature independence (which may not fully hold for acoustic features).
+#MLP (Neural Net)
+    #Train: 94.8%, Test: 92.9%.
+    #Precision lower (0.889) → struggles with false positives.
+    #Still fairly strong.
+#XGBoost
+    #Train: 100%, Test: 94.3%.
+    #Similar to Random Forest but often more efficient.
+    #Good balance of metrics.
+#CatBoost
+    #Train: 97.9%, Test: 94.3%.
+    #Avoids complete overfitting (unlike XGBoost/Random Forest).
+    #Very stable.
